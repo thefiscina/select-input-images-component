@@ -1,0 +1,16 @@
+{
+  "name": "select-input-images",
+  "version": "1.0.0",
+  "description": "select com a possibilidade de colocar imagens",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "Dropdown",
+    "Select",
+    "Images"
+  ],
+  "author": "JONATHAS FISCINA",
+  "license": "ISC"
+}
