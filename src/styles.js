@@ -18,9 +18,9 @@ const styles = StyleSheet.create({
   dropdownButtonText: {
     flex: 1,
     fontSize: 18,
-    color: '#000000',
-    textAlign: 'center',
-    marginHorizontal: 8,
+    // color: '#000000',
+    // textAlign: 'center',
+    // marginHorizontal: 8,
   },
   dropdownCustomizedButtonParent: {
     flex: 1,
@@ -54,9 +54,6 @@ const styles = StyleSheet.create({
   dropdownRowText: {
     flex: 1,
     fontSize: 18,
-    color: '#000000',
-    textAlign: 'center',
-    marginHorizontal: 8,
   },
   dropdownCustomizedRowParent: {
     flex: 1,
@@ -69,6 +66,12 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 10,
     elevation: 10,
+  },
+  tinyLogo: {
+    width: 25,
+    height: 25,
+    marginHorizontal: 10,
+    padding: 10
   },
 });
 

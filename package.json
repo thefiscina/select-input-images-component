@@ -1,6 +1,6 @@
 {
   "name": "select-input-images",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "select com a possibilidade de colocar imagens",
   "main": "index.js",
   "scripts": {

@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef, forwardRef, useImperativeHandle } from 'react';
-import { View, Text, TouchableOpacity, FlatList, Dimensions, ActivityIndicator, Modal, I18nManager } from 'react-native';
+import { View, Text, TouchableOpacity, FlatList, Dimensions, ActivityIndicator, Modal, I18nManager, Image } from 'react-native';
 import styles from './styles';
 import { findIndexInArr } from './helpers/findIndexInArr';
 import { calculateDropdownHeight } from './helpers/calculateDropdownHeight';
@@ -87,14 +87,14 @@ const SelectInput = (
   useEffect(() => {
     if (!data || data.length == 0) {
       reset();
-    }    
+    }
   }, [data]);
 
   // SETAR VALOR SELECIONADO
   useEffect(() => {
     if (isExist(valueSelected)) {
-      if (data && isExist(data[valueSelected])) {
-        setDefault(valueSelected);
+      if (data) {
+        setDefault(findIndexInArr(valueSelected, data));
       }
     }
   }, [valueSelected]);
@@ -126,7 +126,6 @@ const SelectInput = (
   /* ******************** Methods ******************** */
   const openDropdown = () => {
     DropdownButton.current.measure((fx, fy, w, h, px, py) => {
-      // console.log('position y => ', py, '\nheight', h, '\nposition x => ', px)
       setButtonLayout({ w, h, px, py });
       if (height - 18 < py + h + dropdownHEIGHT) {
         setDropdownPX(px);
@@ -177,7 +176,7 @@ const SelectInput = (
   };
   const onSelectItem = (item, index) => {
     closeDropdown();
-    onSelect(item, index);
+    onSelect(item.code, index);
     setSelectedItem(item);
     setSelectedIndex(index);
   };
@@ -192,7 +191,7 @@ const SelectInput = (
             valueColor={searchInputTxtColor}
             placeholder={searchPlaceHolder}
             placeholderTextColor={searchPlaceHolderColor}
-            onChangeText={(text) => { console.log(text), setSearchTxt(text) }}
+            onChangeText={(text) => { setSearchTxt(text) }}
             inputStyle={searchInputStyle}
             renderLeft={renderSearchInputLeftIcon}
             renderRight={renderSearchInputRightIcon}
@@ -201,27 +200,45 @@ const SelectInput = (
       )
     );
   };
+
   const renderFlatlistItem = ({ item, index }) => {
     return item ? (
       <TouchableOpacity
         activeOpacity={0.8}
         style={{ ...styles.dropdownRow, ...rowStyle, ...(index == selectedIndex && selectedRowStyle) }}
         onPress={() => onSelectItem(item, index)}>
-        {renderCustomizedRowChild ? (
-          <View style={styles.dropdownCustomizedRowParent}>{renderCustomizedRowChild(item, index)}</View>
-        ) : (
+        <View style={{
+          flexDirection: 'row',
+          width: '100%',
+          // justifyContent: 'flex-start',
+          alignItems: 'center',
+          marginHorizontal: 10,
+          paddingHorizontal: 10
+        }}>
+          {
+            item.img ?
+              <Image
+                style={styles.tinyLogo}
+                source={{
+                  uri: item.img,
+                }}
+              />
+              : null
+          }
+
           <Text
             numberOfLines={1}
             allowFontScaling={false}
             style={{ ...styles.dropdownRowText, ...rowTextStyle, ...(index == selectedIndex && selectedRowTextStyle) }}>
-            {rowTextForSelection ? rowTextForSelection(item, index) : item.toString()}
+            {item.name}
           </Text>
-        )}
+        </View>
       </TouchableOpacity>
     ) : (
       <></>
     );
   };
+
   const renderDropdown = () => {
     return (
       isVisible && (
@@ -261,20 +278,24 @@ const SelectInput = (
                 ? { right: dropdownStyle?.right || dropdownPX }
                 : { left: dropdownStyle?.left || dropdownPX }),
             }}>
+
             {!data || data.length == 0 ? (
               <View style={styles.dropdownActivityIndicatorView}>
                 <ActivityIndicator size="small" color={'#999999'} />
               </View>
             ) : (
+              // <View>
+              //   <Text>teste</Text>
+              // </View>
               <FlatList
-                data={searchTxt ? deepSearchInArr(searchTxt, data) : data}
+                data={data}
                 keyExtractor={(item, index) => index.toString()}
                 ref={ref => (dropDownFlatlistRef.current = ref)}
                 renderItem={renderFlatlistItem}
                 getItemLayout={getItemLayout}
                 onLayout={onLayout}
-                ListHeaderComponent={renderSearchView()}
-                stickyHeaderIndices={search && [0]}
+                // ListHeaderComponent={renderSearchView()}
+                // stickyHeaderIndices={search && [0]}
                 keyboardShouldPersistTaps="always"
               />
             )}
@@ -302,13 +323,23 @@ const SelectInput = (
           {renderCustomizedButtonChild(selectedItem, selectedIndex)}
         </View>
       ) : (
-        <Text numberOfLines={1} allowFontScaling={false} style={{ ...styles.dropdownButtonText, ...buttonTextStyle }}>
-          {isExist(selectedItem)
-            ? buttonTextAfterSelection
-              ? buttonTextAfterSelection(selectedItem, selectedIndex)
-              : selectedItem.toString()
-            : defaultButtonText || 'Select an option.'}
-        </Text>
+        <>
+          <Text numberOfLines={1} allowFontScaling={false} style={{ ...styles.dropdownButtonText, ...buttonTextStyle }}>
+            {isExist(selectedItem)
+              ? selectedItem.name.toString()
+              : defaultButtonText || 'Select an option.'}
+          </Text>
+          {
+            selectedItem != null && selectedItem.img ?
+              <Image
+                style={styles.tinyLogo}
+                source={{
+                  uri: selectedItem.img,
+                }}
+              />
+              : null
+          }
+        </>
       )}
     </TouchableOpacity>
   );
